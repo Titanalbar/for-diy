@@ -9,12 +9,26 @@
     font-smooth: never; -webkit-font-smoothing: none; box-sizing: border-box;
 }
 body {
-    font-family: 'Monocraft', monospace; color: var(--mc-text-light); text-shadow: 2px 2px 0px var(--mc-text-shadow);
+    font-family: 'Monocraft', monospace;
+    color: var(--mc-text-light);
+    text-shadow: 2px 2px 0px var(--mc-text-shadow);
+
+    /* --- GANTI BAGIAN BACKGROUND ANDA DENGAN BLOK INI --- */
     background-image: url('./assets/bg-texture.jpg');
-    background-repeat: repeat; background-color: #3b2713;
-    background-size: 64px; /* <-- TAMBAHKAN BARIS INI */
-    image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;
-    margin: 0; padding: 20px; overflow-x: hidden;
+    background-repeat: no-repeat;       /* 1. JANGAN DIULANG */
+    background-size: cover;             /* 2. TUTUPI SELURUH LAYAR */
+    background-position: center center; /* 3. POSISIKAN DI TENGAH */
+    background-attachment: fixed;       /* 4. DIAM DI TEMPAT SAAT SCROLL */
+    background-color: #3b2713;          /* Warna fallback jika gambar gagal */
+    /* ---------------------------------------------------- */
+
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
 }
 .minecraft-container {
     background-color: var(--mc-ui-bg); border: 3px solid var(--mc-border-dark); box-shadow: inset 0px 0px 0px 3px var(--mc-border-light); padding: 25px; margin: 20px auto; max-width: 800px; width: 90%; transition: opacity 0.5s ease-in-out;
