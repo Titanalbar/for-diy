@@ -1,8 +1,10 @@
+// --- ELEMEN UTAMA DIAMBIL DARI HTML ---
 const quizContainer = document.getElementById('quiz-container');
 const heartsContainer = document.getElementById('hearts-container');
+// BARU: Ambil elemen audio untuk efek suara klik
+const clickSound = document.getElementById('click-sound');
 
-// GANTI SELURUH OBJEK quizData LAMA DENGAN YANG BARU INI
-
+// Data kuis Anda (tidak ada perubahan pada isinya)
 const quizData = {
     'start': {
         question: 'Untuk Diyyah, Bidadari 7 Tahunku.',
@@ -100,7 +102,7 @@ const quizData = {
         question: 'Terima kasih...',
         prose: 'Detak jantungku berhenti sejenak. Aku punya satu pesan video terakhir untukmu.',
         answers: [
-            { text: 'Lihat video', next: 'final_video' } 
+            { text: 'Lihat video', next: 'final_video' }  
         ]
     },
     'final_video': {
@@ -113,23 +115,34 @@ const quizData = {
         prose: 'Ambil waktu sebanyak yang kamu butuhkan. Aku tidak akan memaksa. Aku akan hargai apapun keputusanmu. Sambil menunggu, aku akan terus fokus memperbaiki diri, bukan agar kamu kembali, tapi karena itu hal yang benar untuk dilakukan. Aku sayang kamu.'
     }
 };
+
+// --- FUNGSI BARU: EFEK TEKS MENGETIK ---
+function typewriterEffect(element, text, speed = 35, callback) {
+    let i = 0;
+    element.textContent = ''; // Kosongkan teks sebelumnya
     
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        } else if (callback) {
+            callback(); // Panggil callback jika sudah selesai
+        }
+    }
+    type();
+}
+
 function showQuestion(questionId) {
     const data = quizData[questionId];
-    
-    // 1. Terapkan efek fade-out
     quizContainer.classList.add('fade-out');
 
-    // 2. Tunggu transisi selesai, baru ganti konten
     setTimeout(() => {
         quizContainer.innerHTML = ''; 
-
         const music = document.getElementById('background-music');
 
         if (questionId === 'q1') {
-            music.play().catch(error => {
-                console.log("Gagal memulai musik secara otomatis:", error);
-            });
+            music.play().catch(error => console.log("Gagal memulai musik otomatis:", error));
         }
         
         if (data.type === 'video') {
@@ -140,10 +153,6 @@ function showQuestion(questionId) {
             video.autoplay = true;
             video.playsInline = true;
 
-            video.play().catch(error => {
-                console.log("Autoplay dengan suara gagal.");
-            });
-
             const proseEl = document.createElement('p');
             proseEl.textContent = data.prose;
             proseEl.style.marginTop = '20px';
@@ -151,62 +160,71 @@ function showQuestion(questionId) {
             quizContainer.appendChild(video);
             quizContainer.appendChild(proseEl);
 
-            // PERBAIKAN: Gunakan 'timeupdate' yang lebih andal
             let videoHasEnded = false; 
-            // --- KODE BARU ---
-video.addEventListener('timeupdate', () => {
-    // Cek jika video sudah mendekati akhir & aksi belum dijalankan
-    if (!videoHasEnded && (video.duration - video.currentTime < 0.5)) {
-        
-        videoHasEnded = true; 
-        clearInterval(heartInterval);
-        heartsContainer.innerHTML = '';
-        
-        const overlay = document.getElementById('final-overlay');
-        overlay.style.display = 'flex';
-        
-        setTimeout(() => {
-            overlay.style.opacity = '1';
-
-            // --- BAGIAN BARU DITAMBAHKAN DI SINI ---
-            // music sudah didefinisikan di awal fungsi showQuestion
-            music.volume = 0.5;      // Atur volume ke 50%
-            music.currentTime = 0;   // Kembali ke awal lagu
-            music.play();            // Putar lagi musiknya
-            // ----------------------------------------
-
-        }, 100); // delay kecil untuk memastikan transisi berjalan
-    }
-});
+            video.addEventListener('timeupdate', () => {
+                if (!videoHasEnded && (video.duration - video.currentTime < 0.5)) {
+                    videoHasEnded = true; 
+                    clearInterval(heartInterval);
+                    heartsContainer.innerHTML = '';
+                    
+                    const overlay = document.getElementById('final-overlay');
+                    overlay.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        overlay.style.opacity = '1';
+                        music.volume = 0.5;
+                        music.currentTime = 0;
+                        music.play();
+                    }, 100);
+                }
+            });
         } 
         else { 
-            const questionEl = document.createElement('h1');
-            questionEl.textContent = data.question;
+            const questionEl = document.createElement('h2'); // Menggunakan h2 agar sesuai dengan style CSS
             quizContainer.appendChild(questionEl);
             
-            if (data.prose) {
-                const proseEl = document.createElement('p');
-                proseEl.textContent = data.prose;
-                quizContainer.appendChild(proseEl);
-            }
-
+            const proseEl = document.createElement('p');
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
             
-            if (data.answers) {
-                data.answers.forEach(answer => {
-                    const button = document.createElement('button');
-                    button.textContent = answer.text;
-                    button.onclick = () => showQuestion(answer.next);
-                    buttonContainer.appendChild(button);
-                });
+            // --- LOGIKA BARU DENGAN EFEK MENGETIK ---
+            // 1. Tampilkan pertanyaan
+            typewriterEffect(questionEl, data.question, 35, () => {
+                // 2. Jika ada prosa, tampilkan prosa setelah pertanyaan selesai
+                if (data.prose) {
+                    quizContainer.appendChild(proseEl);
+                    typewriterEffect(proseEl, data.prose, 35, () => {
+                        // 3. Tampilkan tombol setelah prosa selesai
+                        populateButtons();
+                    });
+                } else {
+                    // 3. Jika tidak ada prosa, langsung tampilkan tombol
+                    populateButtons();
+                }
+            });
+
+            function populateButtons() {
+                if (data.answers) {
+                    data.answers.forEach(answer => {
+                        const button = document.createElement('button');
+                        button.textContent = answer.text;
+                        // --- FUNGSI KLIK BARU DENGAN SUARA ---
+                        button.onclick = () => {
+                            if (clickSound) {
+                                clickSound.currentTime = 0;
+                                clickSound.play().catch(e => console.log("Gagal memutar suara"));
+                            }
+                            showQuestion(answer.next);
+                        };
+                        buttonContainer.appendChild(button);
+                    });
+                    quizContainer.appendChild(buttonContainer);
+                }
             }
-            quizContainer.appendChild(buttonContainer);
         }
 
-        // 3. Tampilkan kembali container dengan konten baru (efek fade-in)
         quizContainer.classList.remove('fade-out');
-    }, 500);
+    }, 500); // Waktu harus cocok dengan transisi di CSS
 }
 
 function createHeart() {
@@ -214,7 +232,10 @@ function createHeart() {
     heart.classList.add('heart');
     heart.style.left = Math.random() * 100 + 'vw';
     heart.style.animationDuration = Math.random() * 5 + 5 + 's';
-    heart.innerHTML = '❤️';
+    // SARAN: Untuk tema Minecraft yang lebih kuat, ganti emoji '❤️' 
+    // dengan tag <img> yang berisi gambar hati pixelated (pixel heart).
+    // Contoh: heart.innerHTML = '<img src="pixel-heart.png" width="30">';
+    heart.innerHTML = '❤️'; 
     heartsContainer.appendChild(heart);
 
     setTimeout(() => {
@@ -222,7 +243,7 @@ function createHeart() {
     }, 10000);
 }
 
-// PERBAIKAN: Simpan interval ke dalam variabel
 let heartInterval = setInterval(createHeart, 300);
 
+// Memulai kuis
 showQuestion('start');
