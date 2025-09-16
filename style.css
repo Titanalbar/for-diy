@@ -15,12 +15,11 @@ body {
     image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;
     margin: 0; padding: 20px; overflow-x: hidden;
 }
-
 .minecraft-container {
     background-color: var(--mc-ui-bg); border: 3px solid var(--mc-border-dark); box-shadow: inset 0px 0px 0px 3px var(--mc-border-light); padding: 25px; margin: 20px auto; max-width: 800px; width: 90%; transition: opacity 0.5s ease-in-out;
 }
 button, .minecraft-btn {
-    font-family: 'Monocraft', monospace; font-size: 16px; color: var(--mc-text-light); text-shadow: 2px 2px 0px var(--mc-text-shadow); background-color: var(--mc-stone); border: 2px solid var(--mc-border-dark); padding: 12px 20px; box-shadow: inset -2px -4px 0px 0px var(--mc-border-dark), inset 2px 2px 0px 0px var(--mc-border-light); text-align: center; transition: all 0.1s ease; width: 100%;
+    font-family: 'Monocraft', monospace; font-size: 16px; color: var(--mc-text-light); text-shadow: 2px 2px 0px var(--mc-text-shadow); background-color: var(--mc-stone); border: 2px solid var(--mc-border-dark); padding: 12px 20px; box-shadow: inset -2px -4px 0px 0px var(--mc-border-dark), inset 2px 2px 0px 0px var(--mc-border-light); text-align: center; transition: all 0.1s ease; width: 100%; cursor: pointer;
 }
 button:hover, .minecraft-btn:hover { background-color: #919191; }
 button:active, .minecraft-btn:active { box-shadow: inset -2px -4px 0px 0px var(--mc-border-light), inset 2px 2px 0px 0px var(--mc-border-dark); padding-top: 14px; padding-bottom: 10px; }
