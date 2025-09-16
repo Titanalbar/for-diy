@@ -1,41 +1,96 @@
-body {
-    background-color: #FFECF4;
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
-    color: #5D4037;
-    text-align: center;
+/* ========================================================================== */
+/* TEMA MINECRAFT                                  */
+/* ========================================================================== */
+
+/* LANGKAH 1: FONDASI TEMA (FONT DAN WARNA) */
+/* -------------------------------------------------------------------------- */
+
+/* Impor Font Minecraft */
+@import url('https://fonts.cdnfonts.com/css/monocraft');
+
+/* Variabel Palet Warna Khas Minecraft */
+:root {
+    --mc-stone: #7F7F7F;
+    --mc-text-light: #FFFFFF;
+    --mc-text-shadow: #3E3E3E;
+    --mc-border-light: #BCBCBC;
+    --mc-border-dark: #373737;
+    --mc-ui-bg: rgba(10, 10, 10, 0.75);
+    --mc-green-achievement: #56A002;
+    --mc-red-heart: #d81b60; /* Mempertahankan warna merah dari tema asli untuk hati */
 }
 
-.container {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    max-width: 500px;
+/* LANGKAH 2: GAYA GLOBAL */
+/* -------------------------------------------------------------------------- */
+
+/* Menghilangkan anti-aliasing agar font tajam seperti pixel */
+* {
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Monocraft', monospace;
+    color: var(--mc-text-light);
+    text-shadow: 2px 2px 0px var(--mc-text-shadow);
+    
+    /* Menggunakan tekstur tanah dari website Minecraft sebagai background */
+    background-image: url('https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/img/bg-texture.png');
+    background-repeat: repeat;
+    background-color: #3b2713; /* Warna dasar jika gambar gagal dimuat */
+
+    /* Membuat gambar terlihat pixelated */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden; /* Mencegah scroll horizontal */
+}
+
+/* LANGKAH 3: ELEMEN UI MINECRAFT */
+/* -------------------------------------------------------------------------- */
+
+/* Gaya utama untuk semua kontainer UI */
+.minecraft-container {
+    background-color: var(--mc-ui-bg);
+    border: 3px solid var(--mc-border-dark);
+    box-shadow: inset 0px 0px 0px 3px var(--mc-border-light);
+    padding: 25px;
+    margin: 20px auto;
+    max-width: 800px;
     width: 90%;
-    z-index: 2;
     transition: opacity 0.5s ease-in-out;
 }
 
-.container.fade-out {
-    opacity: 0;
+/* Gaya untuk tombol khas Minecraft */
+button, .minecraft-btn {
+    font-family: 'Monocraft', monospace;
+    font-size: 16px;
+    color: var(--mc-text-light);
+    text-shadow: 2px 2px 0px var(--mc-text-shadow);
+    background-color: var(--mc-stone);
+    border: 2px solid var(--mc-border-dark);
+    padding: 12px 20px;
+    box-shadow: inset -2px -4px 0px 0px var(--mc-border-dark), inset 2px 2px 0px 0px var(--mc-border-light);
+    
+    cursor: url('https://wiki.hypixel.net/images/e/e3/Cursor_pointing.png'), pointer;
+    text-align: center;
+    transition: all 0.1s ease;
+    width: 100%; /* Sesuai gaya asli */
 }
 
-h1 {
-    font-family: Arial, sans-serif;
-    color: #D81B60;
-    font-size: 2.5em;
+button:hover, .minecraft-btn:hover {
+    background-color: #919191; /* Sedikit lebih terang */
 }
 
-p {
-     font-size: 1.1em;
-    line-height: 1.6;
-    text-align: justify;
+button:active, .minecraft-btn:active {
+    /* Efek tombol ditekan */
+    box-shadow: inset -2px -4px 0px 0px var(--mc-border-light), inset 2px 2px 0px 0px var(--mc-border-dark);
+    padding-top: 14px;
+    padding-bottom: 10px;
 }
 
 .button-container {
@@ -45,95 +100,104 @@ p {
     gap: 15px;
 }
 
-button {
-    background-color: #E91E63;
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    border-radius: 50px;
-    font-size: 1em;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 100%;
+/* LANGKAH 4: GAYA TEKS & KONTEN SPESIFIK */
+/* -------------------------------------------------------------------------- */
+
+h1, h2 {
+    color: var(--mc-green-achievement); /* Warna seperti "Achievement Get!" */
+    font-size: 2.5em;
+    text-align: center;
 }
 
-button:hover {
-    background-color: #D81B60;
-    transform: translateY(-2px);
+p {
+    font-size: 1.1em;
+    line-height: 1.7;
+    text-align: left; /* Justify tidak terlihat bagus dengan font pixel */
 }
 
-.heart {
-    position: absolute;
-    font-size: 2rem;
-    color: #FF80AB;
-    top: -10vh; 
-    animation: fall 10s linear infinite;
-    z-index: 1;
+#quiz-container {
+    /* Logika fade-out dari CSS asli tetap dipertahankan */
+    opacity: 1;
 }
 
-@keyframes fall {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(120vh);
-        opacity: 0;
-    }
+#quiz-container.fade-out {
+    opacity: 0;
 }
 
-video {
-    max-width: 100%;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
+/* Gaya untuk surat terakhir */
 #final-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.7); /* Latar belakang gelap saat surat muncul */
     z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* UBAHAN DI SINI */
-    overflow-y: auto;      /* UBAHAN DI SINI */
-    display: none;
+    display: none; /* Diatur oleh JS */
     opacity: 0;
     transition: opacity 1.5s ease-in;
+    
+    /* Menggunakan flexbox untuk menengahkan surat */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    
+    /* Menghapus gaya container dari sini karena sudah ada di HTML */
+}
+
+/* Mengatur agar konten surat bisa di-scroll jika terlalu panjang */
+#final-overlay .minecraft-container {
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 #final-text {
     color: #fff;
-    font-family: 'Montserrat', sans-serif;
     font-size: 1.2em;
-    line-height: 1.8;
-    text-align: justify;
-    max-width: 800px;
-    padding: 40px;
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* Penting untuk menjaga format spasi dan enter surat */
 }
 
-/* --- Media Query untuk Layar Kecil (HP) --- */
-@media (max-width: 600px) {
-    .container {
-        padding: 25px;
+/* LANGKAH 5: ANIMASI */
+/* -------------------------------------------------------------------------- */
+
+/* Animasi hati jatuh (disesuaikan) */
+.heart {
+    position: absolute;
+    font-size: 2rem;
+    color: var(--mc-red-heart);
+    top: -10vh;  
+    animation: fall 10s linear infinite;
+    z-index: -1; /* Ditaruh di belakang agar tidak mengganggu teks */
+    text-shadow: none; /* Menghilangkan bayangan agar lebih jelas */
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
     }
-    h1 {
+    100% {
+        transform: translateY(120vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* LANGKAH 6: RESPONSIVE UNTUK LAYAR KECIL */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    h1, h2 {
         font-size: 2em;
     }
     p {
         font-size: 1em;
     }
-    button {
-        padding: 12px 15px;
-        font-size: 0.9em;
-    }
     #final-text {
         font-size: 1em;
-        padding: 20px;
+    }
+    button, .minecraft-btn {
+        padding: 12px 15px;
+        font-size: 0.9em;
     }
 }
