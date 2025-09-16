@@ -2,6 +2,7 @@ const quizContainer = document.getElementById('quiz-container');
 const heartsContainer = document.getElementById('hearts-container');
 const clickSound = document.getElementById('click-sound');
 
+// --- DATA KUIS (TIDAK ADA PERUBAHAN) ---
 const quizData = {
     'start': { question: 'Untuk Diyyah, Bidadari 7 Tahunku.', prose: 'Aku tahu kata-kata saja tidak akan pernah cukup. Tapi izinkan aku mengajakmu dalam sebuah perjalanan singkat, untuk melihat semua dari sudut pandangku yang sekarang. Aku yang sudah benar-benar sadar.', answers: [{ text: 'Mulai perjalanan...', next: 'q1' }] },
     'q1': { question: 'Langkah pertama adalah pengakuan. Dari semua kebodohanku, mana yang meninggalkan luka paling dalam untukmu?', answers: [{ text: 'Saat aku tidak jujur dan menyembunyikan sesuatu.', next: 'q2_bohong' }, { text: 'Saat aku melukai kepercayaanmu dengan perempuan lain.', next: 'q2_selingkuh' }, { text: 'Sikap dinginku dan caraku yang sering tidak menghargaimu.', next: 'q2_sikap' }] },
@@ -41,66 +42,63 @@ function showQuestion(questionId) {
     setTimeout(() => {
         quizContainer.innerHTML = '';
         const music = document.getElementById('background-music');
-       // GANTI DENGAN KODE INI
-if (questionId === 'q1') {
-    // Memaksa audio untuk load sebelum play
-    music.load();
-    const playPromise = music.play();
-    if (playPromise !== undefined) {
-        playPromise.then(_ => {
-            // Autoplay berhasil.
-            console.log("Musik latar belakang berhasil dimulai.");
-        }).catch(error => {
-            // Autoplay gagal. Tampilkan pesan di console.
-            console.error("Gagal memulai musik otomatis:", error);
-        });
-    }
-}
-        // GANTI SELURUH BLOK VIDEO ANDA DENGAN INI
-if (data.type === 'video') {
-    music.pause();
-    const video = document.createElement('video');
-    video.src = data.videoSrc;
-    video.controls = true;
-    video.playsInline = true;
-    // Kita hapus autoplay dan akan menggunakan perintah .play() manual
-    // video.autoplay = true; 
-
-    const proseEl = document.createElement('p');
-    proseEl.textContent = data.prose;
-    proseEl.style.marginTop = '20px';
-
-    quizContainer.appendChild(video);
-    quizContainer.appendChild(proseEl);
-
-    // Perintah .play() yang lebih kuat
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(error => {
-            console.error("Gagal memulai video secara otomatis:", error);
-            // Jika autoplay gagal, kita pastikan tombol controls terlihat
-            // agar pengguna bisa menekan play secara manual.
-            video.controls = true; 
-        });
-    }
-
-    let videoHasEnded = false; 
-    video.addEventListener('timeupdate', () => {
-        if (!videoHasEnded && (video.duration - video.currentTime < 0.5)) {
-            videoHasEnded = true; 
-            clearInterval(heartInterval);
-            heartsContainer.innerHTML = '';
-            
-            const overlay = document.getElementById('final-overlay');
-            overlay.style.display = 'flex';
-            
-            setTimeout(() => {
-                overlay.style.opacity = '1';
-                music.volume = 0.5;
-                music.currentTime = 0;
-                music.play();
-            }, 100);
+        
+        // PERMINTAAN 1: MUSIK MULAI SAAT TOMBOL "MULAI PERJALANAN" DIKLIK
+        // Tombol "Mulai perjalanan..." memanggil showQuestion('q1').
+        // Jadi, kode ini akan berjalan TEPAT setelah tombol itu diklik.
+        if (questionId === 'q1') {
+            const playPromise = music.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("Gagal memulai musik otomatis:", error);
+                });
+            }
         }
+        
+        // PERMINTAAN 2: MUSIK BERHENTI SAAT TOMBOL "LIHAT VIDEO" DIKLIK
+        // Tombol "Lihat video" memanggil showQuestion('final_video').
+        // Jadi, kode ini akan berjalan TEPAT setelah tombol itu diklik.
+        if (data.type === 'video') {
+            music.pause(); // Musik berhenti di sini
+            
+            const video = document.createElement('video');
+            video.src = data.videoSrc;
+            video.controls = true;
+            video.playsInline = true;
+
+            const proseEl = document.createElement('p');
+            proseEl.textContent = data.prose;
+            proseEl.style.marginTop = '20px';
+
+            quizContainer.appendChild(video);
+            quizContainer.appendChild(proseEl);
+
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("Gagal memulai video secara otomatis:", error);
+                    video.controls = true; 
+                });
+            }
+
+            let videoHasEnded = false; 
+            video.addEventListener('timeupdate', () => {
+                if (!videoHasEnded && video.duration > 0 && (video.duration - video.currentTime < 0.5)) {
+                    videoHasEnded = true; 
+                    clearInterval(heartInterval);
+                    heartsContainer.innerHTML = '';
+                    
+                    const overlay = document.getElementById('final-overlay');
+                    overlay.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        overlay.style.opacity = '1';
+                        // PERMINTAAN 3: MUSIK MULAI LAGI SETELAH VIDEO SELESAI
+                        music.volume = 0.5;
+                        music.currentTime = 0;
+                        music.play(); // Musik mulai lagi di sini
+                    }, 100);
+                }
             });
         } else {
             const questionEl = document.createElement('h2');
