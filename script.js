@@ -39,11 +39,11 @@ const quizData = {
         ]
     },
     'final_video': {
-        type: 'video',
-        // PENTING: Pastikan file 'diyyah.mp4' ada di folder utama proyek Anda
-        videoSrc: 'diyyah.mp4',
-        prose: 'Aku mencintaimu, sekarang dan selamanya.'
+    type: 'video',
+    videoSrc: './assets/diyyah.mp4', // <-- Diarahkan ke folder assets
+    prose: 'Aku mencintaimu, sekarang dan selamanya.'
     },
+    
     'end_think': {
         question: 'Tidak apa-apa, aku mengerti.',
         prose: 'Ambil waktu sebanyak yang kamu butuhkan. Aku tidak akan memaksa. Aku akan hargai apapun keputusanmu. Sambil menunggu, aku akan terus fokus memperbaiki diri, bukan agar kamu kembali, tapi karena itu hal yang benar untuk dilakukan. Aku sayang kamu.'
