@@ -2,7 +2,6 @@ const quizContainer = document.getElementById('quiz-container');
 const heartsContainer = document.getElementById('hearts-container');
 const clickSound = document.getElementById('click-sound');
 
-// --- DATA KUIS (TIDAK ADA PERUBAHAN) ---
 const quizData = {
     'start': { question: 'Untuk Diyyah, Bidadari 7 Tahunku.', prose: 'Aku tahu kata-kata saja tidak akan pernah cukup. Tapi izinkan aku mengajakmu dalam sebuah perjalanan singkat, untuk melihat semua dari sudut pandangku yang sekarang. Aku yang sudah benar-benar sadar.', answers: [{ text: 'Mulai perjalanan...', next: 'q1' }] },
     'q1': { question: 'Langkah pertama adalah pengakuan. Dari semua kebodohanku, mana yang meninggalkan luka paling dalam untukmu?', answers: [{ text: 'Saat aku tidak jujur dan menyembunyikan sesuatu.', next: 'q2_bohong' }, { text: 'Saat aku melukai kepercayaanmu dengan perempuan lain.', next: 'q2_selingkuh' }, { text: 'Sikap dinginku dan caraku yang sering tidak menghargaimu.', next: 'q2_sikap' }] },
@@ -38,29 +37,17 @@ function typewriterEffect(element, text, speed = 35, callback) {
 
 function showQuestion(questionId) {
     const data = quizData[questionId];
+    const music = document.getElementById('background-music');
     quizContainer.classList.add('fade-out');
+    
     setTimeout(() => {
         quizContainer.innerHTML = '';
-        const music = document.getElementById('background-music');
         
-        // PERMINTAAN 1: MUSIK MULAI SAAT TOMBOL "MULAI PERJALANAN" DIKLIK
-        // Tombol "Mulai perjalanan..." memanggil showQuestion('q1').
-        // Jadi, kode ini akan berjalan TEPAT setelah tombol itu diklik.
-        if (questionId === 'q1') {
-            const playPromise = music.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("Gagal memulai musik otomatis:", error);
-                });
-            }
-        }
-        
-        // PERMINTAAN 2: MUSIK BERHENTI SAAT TOMBOL "LIHAT VIDEO" DIKLIK
-        // Tombol "Lihat video" memanggil showQuestion('final_video').
-        // Jadi, kode ini akan berjalan TEPAT setelah tombol itu diklik.
+        // DIHAPUS: Logika untuk memulai musik dipindahkan ke onclick tombol
+        // if (questionId === 'q1') { ... }
+
         if (data.type === 'video') {
-            music.pause(); // Musik berhenti di sini
-            
+            music.pause(); // Musik berhenti saat video muncul
             const video = document.createElement('video');
             video.src = data.videoSrc;
             video.controls = true;
@@ -75,10 +62,7 @@ function showQuestion(questionId) {
 
             const playPromise = video.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("Gagal memulai video secara otomatis:", error);
-                    video.controls = true; 
-                });
+                playPromise.catch(error => { console.error("Gagal memulai video:", error); });
             }
 
             let videoHasEnded = false; 
@@ -87,16 +71,13 @@ function showQuestion(questionId) {
                     videoHasEnded = true; 
                     clearInterval(heartInterval);
                     heartsContainer.innerHTML = '';
-                    
                     const overlay = document.getElementById('final-overlay');
                     overlay.style.display = 'flex';
-                    
                     setTimeout(() => {
                         overlay.style.opacity = '1';
-                        // PERMINTAAN 3: MUSIK MULAI LAGI SETELAH VIDEO SELESAI
                         music.volume = 0.5;
                         music.currentTime = 0;
-                        music.play(); // Musik mulai lagi di sini
+                        music.play(); // Musik mulai lagi setelah video selesai
                     }, 100);
                 }
             });
@@ -106,6 +87,7 @@ function showQuestion(questionId) {
             const proseEl = document.createElement('p');
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
+            
             typewriterEffect(questionEl, data.question, 35, () => {
                 if (data.prose) {
                     quizContainer.appendChild(proseEl);
@@ -116,16 +98,33 @@ function showQuestion(questionId) {
                     populateButtons();
                 }
             });
+
             function populateButtons() {
                 if (data.answers) {
                     data.answers.forEach(answer => {
                         const button = document.createElement('button');
                         button.textContent = answer.text;
+
+                        // --- BAGIAN TERPENTING ADA DI SINI ---
                         button.onclick = () => {
+                            // Selalu putar suara klik
                             if (clickSound) {
                                 clickSound.currentTime = 0;
-                                clickSound.play().catch(e => console.log("Gagal memutar suara:", e));
+                                clickSound.play().catch(e => console.log("Gagal memutar suara klik:", e));
                             }
+                            
+                            // BARU: Logika khusus untuk memulai musik HANYA saat tombol pertama diklik
+                            // Tombol pertama adalah yang menuju ke 'q1'
+                            if (answer.next === 'q1') {
+                                const playPromise = music.play();
+                                if (playPromise !== undefined) {
+                                    playPromise.catch(error => {
+                                        console.error("Gagal memulai musik latar:", error);
+                                    });
+                                }
+                            }
+                            
+                            // Lanjutkan ke pertanyaan berikutnya
                             showQuestion(answer.next);
                         };
                         buttonContainer.appendChild(button);
