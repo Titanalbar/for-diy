@@ -96,7 +96,7 @@ function showQuestion(questionId) {
                         button.onclick = () => {
                             if (clickSound) {
                                 clickSound.currentTime = 0;
-                                clickSound.play().catch(e => console.log("Gagal memutar suara"));
+                                clickSound.play().catch(e => console.log("Gagal memutar suara:", e));
                             }
                             showQuestion(answer.next);
                         };
