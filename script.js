@@ -41,36 +41,66 @@ function showQuestion(questionId) {
     setTimeout(() => {
         quizContainer.innerHTML = '';
         const music = document.getElementById('background-music');
-        if (questionId === 'q1') {
-            music.play().catch(error => console.log("Gagal memulai musik otomatis:", error));
+       // GANTI DENGAN KODE INI
+if (questionId === 'q1') {
+    // Memaksa audio untuk load sebelum play
+    music.load();
+    const playPromise = music.play();
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // Autoplay berhasil.
+            console.log("Musik latar belakang berhasil dimulai.");
+        }).catch(error => {
+            // Autoplay gagal. Tampilkan pesan di console.
+            console.error("Gagal memulai musik otomatis:", error);
+        });
+    }
+}
+        // GANTI SELURUH BLOK VIDEO ANDA DENGAN INI
+if (data.type === 'video') {
+    music.pause();
+    const video = document.createElement('video');
+    video.src = data.videoSrc;
+    video.controls = true;
+    video.playsInline = true;
+    // Kita hapus autoplay dan akan menggunakan perintah .play() manual
+    // video.autoplay = true; 
+
+    const proseEl = document.createElement('p');
+    proseEl.textContent = data.prose;
+    proseEl.style.marginTop = '20px';
+
+    quizContainer.appendChild(video);
+    quizContainer.appendChild(proseEl);
+
+    // Perintah .play() yang lebih kuat
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.error("Gagal memulai video secara otomatis:", error);
+            // Jika autoplay gagal, kita pastikan tombol controls terlihat
+            // agar pengguna bisa menekan play secara manual.
+            video.controls = true; 
+        });
+    }
+
+    let videoHasEnded = false; 
+    video.addEventListener('timeupdate', () => {
+        if (!videoHasEnded && (video.duration - video.currentTime < 0.5)) {
+            videoHasEnded = true; 
+            clearInterval(heartInterval);
+            heartsContainer.innerHTML = '';
+            
+            const overlay = document.getElementById('final-overlay');
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                music.volume = 0.5;
+                music.currentTime = 0;
+                music.play();
+            }, 100);
         }
-        if (data.type === 'video') {
-            music.pause();
-            const video = document.createElement('video');
-            video.src = data.videoSrc;
-            video.controls = true;
-            video.autoplay = true;
-            video.playsInline = true;
-            const proseEl = document.createElement('p');
-            proseEl.textContent = data.prose;
-            proseEl.style.marginTop = '20px';
-            quizContainer.appendChild(video);
-            quizContainer.appendChild(proseEl);
-            let videoHasEnded = false;
-            video.addEventListener('timeupdate', () => {
-                if (!videoHasEnded && (video.duration - video.currentTime < 0.5)) {
-                    videoHasEnded = true;
-                    clearInterval(heartInterval);
-                    heartsContainer.innerHTML = '';
-                    const overlay = document.getElementById('final-overlay');
-                    overlay.style.display = 'flex';
-                    setTimeout(() => {
-                        overlay.style.opacity = '1';
-                        music.volume = 0.5;
-                        music.currentTime = 0;
-                        music.play();
-                    }, 100);
-                }
             });
         } else {
             const questionEl = document.createElement('h2');
