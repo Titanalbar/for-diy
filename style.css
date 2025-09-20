@@ -9,26 +9,15 @@
     font-smooth: never; -webkit-font-smoothing: none; box-sizing: border-box;
 }
 body {
-    font-family: 'Monocraft', monospace;
-    color: var(--mc-text-light);
-    text-shadow: 2px 2px 0px var(--mc-text-shadow);
-
-    /* --- GANTI BAGIAN BACKGROUND ANDA DENGAN BLOK INI --- */
+    font-family: 'Monocraft', monospace; color: var(--mc-text-light); text-shadow: 2px 2px 0px var(--mc-text-shadow);
     background-image: url('./assets/bg-texture.jpg');
-    background-repeat: no-repeat;       /* 1. JANGAN DIULANG */
-    background-size: cover;             /* 2. TUTUPI SELURUH LAYAR */
-    background-position: center center; /* 3. POSISIKAN DI TENGAH */
-    background-attachment: fixed;       /* 4. DIAM DI TEMPAT SAAT SCROLL */
-    background-color: #3b2713;          /* Warna fallback jika gambar gagal */
-    /* ---------------------------------------------------- */
-
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-    
-    margin: 0;
-    padding: 20px;
-    overflow-x: hidden;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-color: #3b2713;
+    image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;
+    margin: 0; padding: 20px; overflow-x: hidden;
 }
 .minecraft-container {
     background-color: var(--mc-ui-bg); border: 3px solid var(--mc-border-dark); box-shadow: inset 0px 0px 0px 3px var(--mc-border-light); padding: 25px; margin: 20px auto; max-width: 800px; width: 90%; transition: opacity 0.5s ease-in-out;
@@ -43,12 +32,19 @@ h1, h2 { color: var(--mc-green-achievement); font-size: 2.5em; text-align: cente
 p { font-size: 1.1em; line-height: 1.7; text-align: left; }
 #quiz-container { opacity: 1; }
 #quiz-container.fade-out { opacity: 0; }
-#final-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 100; display: none; opacity: 0; transition: opacity 1.5s ease-in; display: flex; justify-content: center; align-items: center; padding: 20px; }
+#final-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 100;
+    display: none; opacity: 0;
+    transition: opacity 1.5s ease-in;
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column; padding: 20px;
+}
 #final-overlay .minecraft-container { max-height: 90vh; overflow-y: auto; }
 #final-text { color: #fff; font-size: 1.2em; white-space: pre-wrap; }
 .heart {
-    position: absolute;
-    width: 30px; height: 30px;
+    position: absolute; width: 30px; height: 30px;
     background-image: url('./assets/love-pixel.png');
     background-size: contain; background-repeat: no-repeat;
     image-rendering: pixelated;
@@ -57,20 +53,13 @@ p { font-size: 1.1em; line-height: 1.7; text-align: left; }
 @keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(120vh) rotate(360deg); opacity: 0; } }
 @media (max-width: 600px) { h1, h2 { font-size: 2em; } p { font-size: 1em; } #final-text { font-size: 1em; } button, .minecraft-btn { padding: 12px 15px; font-size: 0.9em; } }
 
-/* ================================================= */
-/* BAGIAN BARU YANG DITAMBAHKAN UNTUK MEMPERBAIKI TOMBOL */
-/* ================================================= */
+/* PENYESUAIAN LAPISAN (Z-INDEX FIX) */
 #quiz-container, #final-overlay {
-    position: relative; /* Diperlukan agar z-index berfungsi */
-    z-index: 10;      /* Letakkan kontainer kuis di lapisan atas */
+    position: relative;
+    z-index: 10;
 }
-
 #hearts-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5;       /* Letakkan lapisan hati di belakang kuis */
-    pointer-events: none; /* PENTING: Membuat lapisan ini tidak bisa diklik */
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 5;
+    pointer-events: none;
 }
